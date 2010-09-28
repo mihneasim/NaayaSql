@@ -8,7 +8,7 @@ NAME = 'naaya.sql'
 PATH = NAME.split('.') + ['version.txt']
 VERSION = open(os.path.join(*PATH)).read().strip()
 
-requires = ['setuptools']
+requires = []
 if version_info < (2, 5):
     requires.append('pysqlite2')
 
@@ -24,13 +24,9 @@ setup(name=NAME,
       author='Eau de Web',
       author_email='office@eaudeweb.ro',
       url='http://naaya.eaudeweb.ro',
-      license='GPL',
-      packages=find_packages(exclude=['ez_setup']),
+      packages=find_packages(),
       namespace_packages=['naaya'],
       include_package_data=True,
       zip_safe=False,
       install_requires=requires,
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
       )
