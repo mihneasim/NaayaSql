@@ -10,7 +10,7 @@ VERSION = open(os.path.join(*PATH)).read().strip()
 
 requires = []
 if version_info < (2, 5):
-    requires.append('pysqlite2')
+    requires.append('pysqlite')
 
 setup(name=NAME,
       version=VERSION,
