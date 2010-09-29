@@ -18,9 +18,10 @@ class NaayaSqlTestCase(NaayaFunctionalTestCase):
     to observe dbfiles' changes
 
     """
-    generic_obj = Folder()
 
     def afterSetUp(self):
+        if getattr(self, "generic_obj", None) is None:
+            self.generic_obj = Folder()
         db = getattr(self.generic_obj, "db", None)
         if db is None:
             self.generic_obj.db = new_db()
@@ -62,7 +63,7 @@ class NaayaSqlTestCase(NaayaFunctionalTestCase):
             pool[size-i-1].drop()
 
     def test_zzz_final_drop(self):
-        dbfile = self.generic_obj.db.get_path()
+        dbfile = self.generic_obj.db._get_path()
         self.generic_obj.db.drop()
         self.assertFalse(os.path.exists(dbfile))
 
