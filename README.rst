@@ -1,4 +1,4 @@
-Producte.NaayaSql - simple database connection interface for Naaya
+naaya.sql - simple database connection interface for Naaya
 ==================================================================
 This product provides the ability to ask and retrieve a connection
 to an sqlite database.

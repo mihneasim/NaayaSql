@@ -1,6 +1,6 @@
 # Python imports
 import os.path
-from os import remove
+from os import remove, mkdir
 try:
     import sqlite3
 except ImportError:
@@ -12,7 +12,7 @@ from random import choice
 # Zope imports
 from Globals import Persistent
 
-DBS_FOLDER_PATH = CLIENT_HOME
+DBS_FOLDER_PATH = os.path.join(CLIENT_HOME, "naaya.sql")
 # CLIENT_HOME is a Zope2 specific constant
 # usually referring to var/zope-instance
 
@@ -29,6 +29,17 @@ class NaayaSqlDb(Persistent):
         return os.path.join(DBS_FOLDER_PATH, self.db_id)
 
     def cursor(self, isolation_level=None):
+        """
+        Returns a cursor to a connection to your sqlite database.
+        Useful methods:
+          * `execute`
+          * `executescript`
+          * `fetchone`
+          * `fetchall`
+        More info here:
+        http://docs.python.org/library/sqlite3.html#cursor-objects
+
+        """
         if not os.path.exists(self._get_path()):
             raise DbMissing
         connection = sqlite3.connect(self._get_path(),
@@ -48,6 +59,8 @@ def new_db():
     while not unique:
         id = ''.join([choice(string.letters) for i in range(10)])
         unique = not exists(id)
+    if not os.path.exists(DBS_FOLDER_PATH):
+        mkdir(DBS_FOLDER_PATH, 0755)
     path = os.path.join(DBS_FOLDER_PATH, id)
     connection = sqlite3.connect(path)
     connection.close()

@@ -1,5 +1,5 @@
 # Python imports
-from unittest import TestSuite, makeSuite
+from unittest import TestCase
 import random
 import os.path
 
@@ -7,10 +7,9 @@ import os.path
 from OFS.Folder import Folder
 
 # Naaya imports
-from Products.Naaya.tests.NaayaFunctionalTestCase import NaayaFunctionalTestCase
 from naaya.sql import new_db, NaayaSqlDb, DbMissing
 
-class NaayaSqlTestCase(NaayaFunctionalTestCase):
+class NaayaSqlTestCase(TestCase):
     """
     TestCase for naaya.sql
     Recommendation: launch `watch -n 0.1 -p -d ls -l`
@@ -19,7 +18,7 @@ class NaayaSqlTestCase(NaayaFunctionalTestCase):
 
     """
 
-    def afterSetUp(self):
+    def setUp(self):
         if getattr(self, "generic_obj", None) is None:
             self.generic_obj = Folder()
         db = getattr(self.generic_obj, "db", None)
@@ -27,7 +26,10 @@ class NaayaSqlTestCase(NaayaFunctionalTestCase):
             self.generic_obj.db = new_db()
         self.crs = self.generic_obj.db.cursor()
 
-    def beforeTearDown(self):
+    def tearDown(self):
+        dbfile = self.generic_obj.db._get_path()
+        self.generic_obj.db.drop()
+        self.assertFalse(os.path.exists(dbfile))
         self.crs.close()
 
     def test_queries(self):
@@ -61,13 +63,3 @@ class NaayaSqlTestCase(NaayaFunctionalTestCase):
             self.assertEqual(crs.fetchall(), [(size-i-1, )])
             crs.close()
             pool[size-i-1].drop()
-
-    def test_zzz_final_drop(self):
-        dbfile = self.generic_obj.db._get_path()
-        self.generic_obj.db.drop()
-        self.assertFalse(os.path.exists(dbfile))
-
-def test_suite():
-    suite = TestSuite()
-    suite.addTest(makeSuite(NaayaSqlTestCase))
-    return suite
